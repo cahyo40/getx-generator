@@ -9,7 +9,7 @@ Generator kode otomatis untuk struktur project Flutter dengan arsitektur GetX ya
 1. **Download file dari GitHub:**
    ```bash
    # Download kedua file secara manual atau
-   git clone https://github.com/username/repo-name.git
+   git clone https://github.com/cahyo40/getx-generator.git
    ```
 
 2. **Letakkan file di root project Flutter:**
