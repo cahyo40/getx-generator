@@ -1,0 +1,113 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate Page",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "page:${input:pageName}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Page (Presentation Only)",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "page:${input:pageName}",
+                "--presentation-only"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Screen on Page", // TASK BARU
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "screen",
+                "${input:screenName}",
+                "on",
+                "${input:pageName}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Repository on Page", // TASK BARU
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "repository:${input:repoName}",
+                "on",
+                "${input:pageName}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Controller",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "controller:${input:controllerName}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Model",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "model:${input:modelName}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Widget",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "widget:${input:widgetName}"
+            ],
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "pageName",
+            "type": "promptString",
+            "description": "Enter page name (e.g., home or settings.profile):"
+        },
+        {
+            "id": "screenName",
+            "type": "promptString",
+            "description": "Enter screen name (e.g., login, profile):"
+        },
+        {
+            "id": "repoName", // INPUT BARU
+            "type": "promptString",
+            "description": "Enter repository name (e.g., login, user):"
+        },
+        {
+            "id": "controllerName",
+            "type": "promptString",
+            "description": "Enter controller name:"
+        },
+        {
+            "id": "modelName",
+            "type": "promptString",
+            "description": "Enter model name:"
+        },
+        {
+            "id": "widgetName",
+            "type": "promptString",
+            "description": "Enter widget name:"
+        }
+    ]
+}
