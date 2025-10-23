@@ -18,6 +18,12 @@ void main(List<String> arguments) {
     return;
   }
 
+  if (arguments[0] == 'init') {
+    _cmdInit(arguments);
+    generatePage("home");
+    return;
+  }
+
   // Handle perintah repository dengan format khusus
   if (arguments[0].startsWith('repository:') &&
       arguments.length >= 3 &&
@@ -43,6 +49,8 @@ void main(List<String> arguments) {
     print('Invalid command format. Use: <command>:<name>');
     exit(1);
   }
+
+  /* ---------- init ---------- */
 
   final type = parts[0];
   final name = parts[1];
@@ -788,3 +796,166 @@ class ${className}Binding extends Bindings {
   // Update routes
   updateRoutes(className, fileName);
 }
+
+/* ============================================================
+   NEW INIT FUNCTION (plain-text pubspec helper)
+   ============================================================ */
+
+/// entry for `dart generate.dart init [--pkg=name:url:ref]`
+void _cmdInit(List<String> args) {
+  // -------------------- 1. parse optional --pkg --------------------
+  String pkgName = 'yo_ui';
+  String pkgUrl = 'https://github.com/cahyo40/youi.git';
+
+  final pkgOpt = args.firstWhere(
+    (a) => a.startsWith('--pkg='),
+    orElse: () => '',
+  );
+  if (pkgOpt.isNotEmpty && pkgOpt.contains('=')) {
+    final raw = pkgOpt.split('=').last;
+    final split = raw.split(':');
+    if (split.length >= 3) {
+      pkgName = split[0];
+      pkgUrl = split[1];
+    } else {
+      print('⚠️  Format --pkg=name:url:ref tidak lengkap, pakai default');
+    }
+  }
+
+  // -------------------- 2. create folders --------------------
+  final folders = [
+    'lib/apps/features',
+    'lib/apps/routes',
+    'lib/apps/controller',
+    'lib/apps/widget',
+    'lib/apps/data/model',
+    'lib/apps/core/error',
+    'lib/apps/core/network',
+    'lib/apps/core/utils',
+    'lib/apps/core/theme',
+    'test/unit',
+    'test/widget',
+    'integration_test',
+    'assets/images',
+    'assets/fonts',
+  ];
+  for (final f in folders) {
+    Directory(f).createSync(recursive: true);
+  }
+
+  // -------------------- 3. skeleton files --------------------
+  File('lib/apps/core/error/failure.dart').writeAsStringSync(
+    'class Failure {\n  final String message;\n  Failure(this.message);\n}',
+  );
+
+  File('lib/apps/core/network/api_constants.dart').writeAsStringSync(
+    'abstract class ApiConstants {\n  static const String baseUrl = "https://jsonplaceholder.typicode.com";\n}',
+  );
+
+  File('lib/apps/core/theme/app_theme.dart').writeAsStringSync('''
+import 'package:flutter/material.dart';
+abstract class AppTheme {
+  static ThemeData light = ThemeData(
+    primarySwatch: Colors.blue,
+    appBarTheme: const AppBarTheme(centerTitle: true),
+  );
+}
+''');
+
+  // routes
+  File('lib/apps/routes/route_names.dart').writeAsStringSync(
+    '// ignore_for_file: constant_identifier_names\nabstract class RouteNames {\n  static const String SPLASH = "/";\n}',
+  );
+
+  // main.dart
+  File('lib/main.dart').writeAsStringSync('''
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:$pkgName/$pkgName.dart';
+
+import 'apps/routes/route_app.dart';
+
+void main()=>runApp(const MyApp());
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context)=>GetMaterialApp(
+        title:'MyApp',
+        theme: YoTheme.lightTheme(context),
+    darkTheme: YoTheme.darkTheme(context),
+        initialRoute:'/',
+        getPages:RouteApp.routes,
+      );
+}
+''');
+
+  // -------------------- 4. inject deps --------------------
+  _injectDepsToPubspec(pkgName: pkgName, pkgUrl: pkgUrl);
+
+  // -------------------- 5. gitignore --------------------
+  File(
+    '.gitignore',
+  ).writeAsStringSync(_gitIgnoreContent, mode: FileMode.append);
+
+  print('✅ Project initialised!');
+  print('   Next: flutter pub get');
+  print('         flutter run');
+}
+
+/* -----------------------------------------------------------
+   Helper: inject dependencies (plain-text)
+----------------------------------------------------------- */
+void _injectDepsToPubspec({required String pkgName, required String pkgUrl}) {
+  final file = File('pubspec.yaml');
+  if (!file.existsSync()) throw ('pubspec.yaml not found');
+
+  final lines = file.readAsLinesSync();
+  final buf = StringBuffer();
+
+  // ignore: unused_local_variable
+  bool inDeps = false, depsClosed = false;
+  final needed = <String, String>{
+    'get': '^4.6.6',
+    'dio': '^5.4.0',
+    'internet_connection_checker': '^1.0.0+1',
+    'shared_preferences': '^2.2.2',
+    'flutter_screenutil': '^5.9.0',
+  };
+  final pkgGitLines = ['  $pkgName:', '    git:', '      url: $pkgUrl'];
+
+  for (final l in lines) {
+    final trim = l.trim();
+    if (trim == 'dependencies:') {
+      inDeps = true;
+    }
+    if (inDeps && trim.startsWith('dev_dependencies:')) {
+      depsClosed = true;
+    }
+
+    // skip kalau sudah ada
+    if (needed.keys.any((k) => trim.startsWith('$k:'))) continue;
+    if (trim.startsWith('$pkgName:')) continue;
+
+    buf.writeln(l);
+
+    // sisipkan setelah dependencies:
+    if (trim == 'dependencies:') {
+      needed.forEach((k, v) => buf.writeln('  $k: $v'));
+      pkgGitLines.forEach(buf.writeln);
+    }
+  }
+  file.writeAsStringSync(buf.toString());
+}
+
+String get _gitIgnoreContent => '''
+
+# --- GENERATED ---
+*.freezed.dart
+*.g.dart
+*.gr.dart
+build/
+.env
+/pubspec.lock
+/android/app/google-services.json
+/ios/Runner/GoogleService-Info.plist
+''';
