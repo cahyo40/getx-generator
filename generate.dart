@@ -112,8 +112,7 @@ class ${className}View extends GetView<${className}Controller> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text('${className}View'.tr),
           centerTitle: true,
@@ -124,7 +123,6 @@ class ${className}View extends GetView<${className}Controller> {
             style: TextStyle(fontSize: 20),
           ),
         ),
-      ),
     );
   }
 }
@@ -242,8 +240,8 @@ class ${className}Controller extends GetxController {
 }
 
 void generateModel(String name) {
-  final className = toCamelCase(name);
-  final fileName = toSnakeCase(name);
+  final className = "${toCamelCase(name)}Model";
+  final fileName = "${toSnakeCase(name)}_model";
 
   final content =
       '''
@@ -712,17 +710,15 @@ class ${className}View extends GetView<${className}Controller> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('${className}View'.tr),
-          centerTitle: true,
-        ),
-        body: const SafeArea(
-          child: Text(
-            '${className}View is working',
-            style: TextStyle(fontSize: 20),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${className}View'.tr),
+        centerTitle: true,
+      ),
+      body: const SafeArea(
+        child: Text(
+          '${className}View is working',
+          style: TextStyle(fontSize: 20),
         ),
       ),
     );
