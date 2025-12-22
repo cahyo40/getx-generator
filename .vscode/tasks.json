@@ -2,17 +2,29 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Generate Page",
+            "label": "GetX: Initialize Project",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "init"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Generate Page",
             "type": "shell",
             "command": "dart",
             "args": [
                 "generate.dart",
                 "page:${input:pageName}"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
         },
         {
-            "label": "Generate Page (Presentation Only)",
+            "label": "GetX: Generate Page (Presentation Only)",
             "type": "shell",
             "command": "dart",
             "args": [
@@ -20,10 +32,11 @@
                 "page:${input:pageName}",
                 "--presentation-only"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
         },
         {
-            "label": "Generate Screen on Page", // TASK BARU
+            "label": "GetX: Generate Screen on Page",
             "type": "shell",
             "command": "dart",
             "args": [
@@ -31,68 +44,170 @@
                 "screen",
                 "${input:screenName}",
                 "on",
-                "${input:pageName}"
+                "${input:targetPageName}"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
         },
         {
-            "label": "Generate Repository on Page", // TASK BARU
+            "label": "GetX: Generate Repository on Page",
             "type": "shell",
             "command": "dart",
             "args": [
                 "generate.dart",
                 "repository:${input:repoName}",
                 "on",
-                "${input:pageName}"
+                "${input:targetPageName}"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
         },
         {
-            "label": "Generate Controller",
+            "label": "GetX: Generate Usecase on Page",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "usecase:${input:usecaseName}",
+                "on",
+                "${input:targetPageName}"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Generate Entity on Page",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "entity:${input:entityName}",
+                "on",
+                "${input:targetPageName}"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Generate Controller",
             "type": "shell",
             "command": "dart",
             "args": [
                 "generate.dart",
                 "controller:${input:controllerName}"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
         },
         {
-            "label": "Generate Model",
+            "label": "GetX: Generate Model",
             "type": "shell",
             "command": "dart",
             "args": [
                 "generate.dart",
                 "model:${input:modelName}"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
         },
         {
-            "label": "Generate Widget",
+            "label": "GetX: Generate Freezed Model",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "model:${input:modelName}",
+                "--freezed"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Generate Widget",
             "type": "shell",
             "command": "dart",
             "args": [
                 "generate.dart",
                 "widget:${input:widgetName}"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Generate Service",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "service:${input:serviceName}"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Delete Page",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "delete:page:${input:pageName}"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: List Pages",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "list"
+            ],
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "GetX: Show Help",
+            "type": "shell",
+            "command": "dart",
+            "args": [
+                "generate.dart",
+                "--help"
+            ],
+            "problemMatcher": [],
+            "group": "build"
         }
     ],
     "inputs": [
         {
             "id": "pageName",
             "type": "promptString",
-            "description": "Enter page name (e.g., home or settings.profile):"
+            "description": "Enter page name (e.g., home, auth.login, settings.profile):"
+        },
+        {
+            "id": "targetPageName",
+            "type": "promptString",
+            "description": "Enter target page name where this will be created:"
         },
         {
             "id": "screenName",
             "type": "promptString",
-            "description": "Enter screen name (e.g., login, profile):"
+            "description": "Enter screen name (e.g., login, profile, dashboard):"
         },
         {
-            "id": "repoName", // INPUT BARU
+            "id": "repoName",
             "type": "promptString",
-            "description": "Enter repository name (e.g., login, user):"
+            "description": "Enter repository name (e.g., user, auth, product):"
+        },
+        {
+            "id": "usecaseName",
+            "type": "promptString",
+            "description": "Enter usecase name (e.g., getuser, login, fetchproducts):"
+        },
+        {
+            "id": "entityName",
+            "type": "promptString",
+            "description": "Enter entity name (e.g., user, product, order):"
         },
         {
             "id": "controllerName",
@@ -108,6 +223,11 @@
             "id": "widgetName",
             "type": "promptString",
             "description": "Enter widget name:"
+        },
+        {
+            "id": "serviceName",
+            "type": "promptString",
+            "description": "Enter service name (e.g., storage, auth, notification):"
         }
     ]
 }

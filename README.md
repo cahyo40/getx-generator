@@ -1,237 +1,503 @@
-# Flutter GetX Code Generator
+# Flutter GetX Code Generator v2.0.0
 
-Generator kode otomatis untuk struktur project Flutter dengan arsitektur GetX yang terorganisir. Alat ini membantu developer menghasilkan boilerplate code secara cepat dan konsisten.
+<p align="center">
+  <img src="https://img.shields.io/badge/version-2.0.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/dart-%3E%3D3.0.0-brightgreen.svg" alt="Dart">
+  <img src="https://img.shields.io/badge/flutter-%3E%3D3.0.0-blue.svg" alt="Flutter">
+  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License">
+</p>
 
-## 📥 Cara Menambahkan ke Project Flutter
+Generator kode otomatis untuk struktur project Flutter dengan arsitektur **GetX + Clean Architecture**. Alat ini membantu developer menghasilkan boilerplate code secara cepat, konsisten, dan mengikuti best practices.
 
-### Metode 1: Clone/Download Manual
+## ✨ Fitur Utama
 
-1. **Download file dari GitHub:**
-   ```bash
-   # Download kedua file secara manual atau
-   git clone https://github.com/cahyo40/getx-generator.git
-   ```
+| Fitur | Deskripsi |
+|-------|-----------|
+| 🏗️ **Page Generator** | Generate halaman lengkap dengan Clean Architecture |
+| 📱 **Screen Generator** | Generate screen di dalam page yang sudah ada |
+| 🎮 **Controller Generator** | Generate standalone controller |
+| 📦 **Model Generator** | Generate model dengan JSON serialization |
+| ❄️ **Freezed Support** | Generate model dengan Freezed annotation |
+| 🔧 **Widget Generator** | Generate reusable widget |
+| 🔌 **Service Generator** | Generate GetxService untuk dependency injection |
+| 📚 **Repository Generator** | Generate repository pattern (abstrak + implementasi) |
+| 🎯 **Usecase Generator** | Generate usecase untuk business logic |
+| 📋 **Entity Generator** | Generate domain entity |
+| 🗑️ **Delete Command** | Hapus page beserta update routes otomatis |
+| 📂 **List Command** | Lihat semua page yang tersedia |
+| ⚙️ **Init Command** | Setup struktur project secara otomatis |
 
-2. **Letakkan file di root project Flutter:**
-   ```
-   your_flutter_project/
-   ├── generate.dart          # File generator
-   ├── tasks.json            # VSCode tasks configuration
-   ├── lib/                  # Existing Flutter code
-   ├── pubspec.yaml          # Existing Flutter config
-   └── ...
-   ```
+## 📥 Instalasi
 
-3. **Pastikan struktur folder sesuai:**
-   ```bash
-   # Jika folder apps belum ada, buat struktur dasar
-   mkdir -p lib/apps/routes
-   ```
-
-### Metode 2: Using Git Submodule (Advanced)
+### Metode 1: Clone Repository
 
 ```bash
-# Tambahkan sebagai submodule
-git submodule add https://github.com/username/flutter-getx-generator.git tools/generator
+# Clone repository
+git clone https://github.com/cahyo40/getx-generator.git
 
-# Copy file ke root project
-cp tools/generator/generate.dart .
-cp tools/generator/tasks.json .
+# Copy file ke project Flutter
+cp getx-generator/generate.dart your_flutter_project/
+cp -r getx-generator/.vscode your_flutter_project/
 ```
 
-### Metode 3: Using Script Installer
+### Metode 2: Download Manual
 
-Buat file `install_generator.sh`:
+```bash
+# Download langsung ke project
+cd your_flutter_project
+
+# Download generate.dart
+curl -O https://raw.githubusercontent.com/cahyo40/getx-generator/main/generate.dart
+
+# Download VSCode tasks (opsional)
+mkdir -p .vscode
+curl -o .vscode/tasks.json https://raw.githubusercontent.com/cahyo40/getx-generator/main/.vscode/tasks.json
+```
+
+### Metode 3: Script Installer
+
+Buat file `install_generator.sh` di root project:
+
 ```bash
 #!/bin/bash
 echo "📥 Installing Flutter GetX Generator..."
 
-# Download files
-curl -o generate.dart https://raw.githubusercontent.com/username/repo/main/generate.dart
-curl -o tasks.json https://raw.githubusercontent.com/username/repo/main/tasks.json
-
-# Create necessary directories
-mkdir -p lib/apps/routes
-mkdir -p lib/apps/features
-mkdir -p lib/apps/widget
-mkdir -p lib/apps/controller
-mkdir -p lib/apps/data/model
+curl -O https://raw.githubusercontent.com/cahyo40/getx-generator/main/generate.dart
+mkdir -p .vscode
+curl -o .vscode/tasks.json https://raw.githubusercontent.com/cahyo40/getx-generator/main/.vscode/tasks.json
 
 echo "✅ Generator installed successfully!"
-echo "🚀 Usage: dart generate.dart page:home"
+echo "🚀 Run: dart generate.dart --help"
 ```
 
-## 🔧 Prerequisites
+## 🔧 Konfigurasi Awal
 
-Pastikan dependencies yang diperlukan sudah ada di `pubspec.yaml`:
+### 1. Dependencies (pubspec.yaml)
+
+Pastikan dependencies berikut ada di `pubspec.yaml`:
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  get: ^4.6.6    # GetX state management
+  get: ^4.6.6
+  dio: ^5.4.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.0
+  # Untuk Freezed (opsional)
+  freezed: ^2.4.6
+  freezed_annotation: ^2.4.1
+  json_serializable: ^6.7.1
+  build_runner: ^2.4.8
 ```
 
-## 🚀 Setup dan Konfigurasi
-
-### 1. **Setup Awal Project**
+### 2. Inisialisasi Project
 
 ```bash
-# Pastikan di root project Flutter
-cd your_flutter_project
-
-# Test generator bekerja
-dart generate.dart
-
-# Output yang diharapkan:
-# Usage: dart generate.dart <command>:<name>
-# Available commands: page, controller, model, widget
+dart generate.dart init
 ```
 
-### 2. **Konfigurasi VSCode (Opsional)**
+Perintah ini akan:
+- ✅ Membuat struktur folder Clean Architecture
+- ✅ Generate file-file skeleton (Failure, Theme, Constants)
+- ✅ Setup routing dasar
+- ✅ Update pubspec.yaml dengan dependencies
+- ✅ Generate main.dart dengan GetMaterialApp
 
-File `tasks.json` akan otomatis bekerja jika diletakkan di folder `.vscode/`:
+## 📖 Penggunaan
+
+### Help & Info
 
 ```bash
-# Jika folder .vscode belum ada
-mkdir .vscode
+# Tampilkan bantuan lengkap
+dart generate.dart --help
 
-# Pindahkan tasks.json ke folder .vscode
-mv tasks.json .vscode/tasks.json
+# Lihat versi
+dart generate.dart --version
+
+# Lihat semua page yang ada
+dart generate.dart list
 ```
 
-### 3. **Update Main Dart File**
+### Generate Page
 
-Pastikan `lib/main.dart` menggunakan GetMaterialApp:
+```bash
+# Full page dengan Clean Architecture
+dart generate.dart page:home
+
+# Dengan nested naming (settings/profile)
+dart generate.dart page:settings.profile
+
+# Presentation only (tanpa data/domain layer)
+dart generate.dart page:onboarding --presentation-only
+
+# Force overwrite file yang sudah ada
+dart generate.dart page:home --force
+```
+
+**Struktur yang dihasilkan:**
+```
+lib/apps/features/home/
+├── data/
+│   ├── datasource/
+│   │   ├── home_network_datasource.dart
+│   │   └── home_offline_datasource.dart
+│   ├── models/
+│   └── repositories/
+│       └── home_repository_impl.dart
+├── domain/
+│   ├── entities/
+│   ├── repositories/
+│   │   └── home_repository.dart
+│   └── usecase/
+│       └── home_usecase.dart
+└── presentation/
+    ├── binding/
+    │   └── home_binding.dart
+    ├── controller/
+    │   └── home_controller.dart
+    └── view/
+        ├── home_view.dart
+        └── screen/
+```
+
+### Generate Screen
+
+Screen adalah sub-view di dalam page yang sudah ada:
+
+```bash
+dart generate.dart screen dashboard on home
+dart generate.dart screen profile on settings
+```
+
+### Generate Repository
+
+```bash
+dart generate.dart repository:user on home
+dart generate.dart repository:product on catalog
+```
+
+Menghasilkan:
+- `domain/repositories/user_repository.dart` (abstract)
+- `data/repositories/user_repository_impl.dart` (implementation)
+
+### Generate Usecase
+
+```bash
+dart generate.dart usecase:getuser on home
+dart generate.dart usecase:login on auth
+```
+
+### Generate Entity
+
+```bash
+dart generate.dart entity:user on home
+dart generate.dart entity:product on catalog
+```
+
+### Generate Standalone Components
+
+```bash
+# Controller
+dart generate.dart controller:theme
+
+# Widget
+dart generate.dart widget:loading
+
+# Model biasa
+dart generate.dart model:user
+
+# Model dengan Freezed
+dart generate.dart model:user --freezed
+
+# Service
+dart generate.dart service:storage
+```
+
+### Delete Page
+
+```bash
+dart generate.dart delete:page:home
+```
+
+Perintah ini akan:
+- 🗑️ Hapus folder page
+- 📝 Update route_names.dart
+- 📝 Update route_app.dart
+
+## 🖥️ VSCode Integration
+
+Setelah meng-copy `.vscode/tasks.json`, gunakan shortcut:
+
+1. **Windows/Linux:** `Ctrl+Shift+P` → "Tasks: Run Task"
+2. **macOS:** `Cmd+Shift+P` → "Tasks: Run Task"
+
+Tasks yang tersedia:
+- GetX: Initialize Project
+- GetX: Generate Page
+- GetX: Generate Page (Presentation Only)
+- GetX: Generate Screen on Page
+- GetX: Generate Repository on Page
+- GetX: Generate Usecase on Page
+- GetX: Generate Entity on Page
+- GetX: Generate Controller
+- GetX: Generate Model
+- GetX: Generate Freezed Model
+- GetX: Generate Widget
+- GetX: Generate Service
+- GetX: Delete Page
+- GetX: List Pages
+- GetX: Show Help
+
+## 📁 Struktur Project
+
+Setelah `init`, struktur project Anda akan terlihat seperti ini:
+
+```
+lib/
+├── main.dart
+└── apps/
+    ├── core/
+    │   ├── constants/
+    │   │   └── app_constants.dart
+    │   ├── error/
+    │   │   └── failure.dart
+    │   ├── network/
+    │   │   └── api_constants.dart
+    │   ├── services/
+    │   ├── theme/
+    │   │   └── app_theme.dart
+    │   └── utils/
+    ├── controller/          # Standalone controllers
+    ├── data/
+    │   └── model/          # Global models
+    ├── features/
+    │   ├── home/           # Feature modules
+    │   ├── auth/
+    │   └── settings/
+    ├── routes/
+    │   ├── route_names.dart
+    │   └── route_app.dart
+    └── widget/             # Reusable widgets
+
+test/
+├── unit/
+└── widget/
+
+integration_test/
+
+assets/
+├── fonts/
+├── icons/
+└── images/
+```
+
+## 🎯 Best Practices
+
+### Naming Convention
+
+| Type | Format | Example |
+|------|--------|---------|
+| Page | lowercase | `home`, `settings`, `user_profile` |
+| Nested Page | dot notation | `settings.profile`, `auth.login` |
+| Controller | PascalCase | `HomeController` |
+| Repository | PascalCase + suffix | `UserRepository`, `UserRepositoryImpl` |
+| Usecase | PascalCase + suffix | `GetUserUsecase` |
+| Entity | PascalCase + suffix | `UserEntity` |
+
+### Clean Architecture Flow
+
+```
+View → Controller → Usecase → Repository → Datasource
+         ↑                        ↓
+       State                   Entity/Model
+```
+
+### Controller Best Practice
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'apps/routes/route_app.dart';
+class HomeController extends GetxController {
+  // State
+  final RxBool isLoading = false.obs;
+  final RxnString error = RxnString();
+  final users = <UserEntity>[].obs;
 
-void main() {
-  runApp(MyApp());
-}
+  // Dependencies (inject via binding)
+  final GetUsersUsecase _getUsersUsecase;
+  
+  HomeController(this._getUsersUsecase);
 
-class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'My Flutter App',
-      initialRoute: '/',
-      getPages: RouteApp.routes,
-      home: HomePage(), // Ganti dengan home page Anda
-    );
+  void onInit() {
+    super.onInit();
+    loadUsers();
+  }
+
+  Future<void> loadUsers() async {
+    try {
+      isLoading.value = true;
+      error.value = null;
+      
+      final result = await _getUsersUsecase();
+      result.fold(
+        (failure) => error.value = failure.message,
+        (data) => users.assignAll(data),
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
 ```
 
-## 🧪 Testing Installation
+### Binding Best Practice
 
-### Test 1: Generate Page Pertama
+```dart
+class HomeBinding extends Bindings {
+  @override
+  void dependencies() {
+    // Datasources
+    Get.lazyPut(() => HomeNetworkDatasource());
+    Get.lazyPut(() => HomeOfflineDatasource());
+    
+    // Repository
+    Get.lazyPut<HomeRepository>(
+      () => HomeRepositoryImpl(Get.find(), Get.find()),
+    );
+    
+    // Usecases
+    Get.lazyPut(() => GetUsersUsecase(Get.find()));
+    
+    // Controller
+    Get.lazyPut(() => HomeController(Get.find()));
+  }
+}
+```
+
+## ⚠️ Troubleshooting
+
+### Error: Dart command not found
+
+Pastikan Dart SDK terinstall dan ada di PATH:
 
 ```bash
+# Check instalasi
+dart --version
+
+# Jika belum ada, install via Flutter
+flutter doctor
+```
+
+### Error: Page does not exist
+
+Pastikan page sudah dibuat sebelum generate screen/repository/usecase:
+
+```bash
+# Lihat page yang tersedia
+dart generate.dart list
+
+# Buat page dulu
 dart generate.dart page:home
 ```
 
-**Output yang diharapkan:**
-```
-Created directory: lib/apps/features/home/presentation/view
-Created directory: lib/apps/features/home/presentation/view/screen
-...
-Generated view: lib/apps/features/home/presentation/view/home_view.dart
-Updated routes for Home
-```
+### Error: File already exists
 
-### Test 2: Generate Screen
+Gunakan flag `--force` untuk overwrite:
 
 ```bash
-dart generate.dart screen dashboard on home
+dart generate.dart page:home --force
 ```
 
-### Test 3: Test VSCode Tasks
+### Routes tidak terupdate
 
-1. Buka VSCode
-2. `Ctrl+Shift+P` → "Tasks: Run Task"
-3. Pilih "Generate Page"
-4. Masukkan nama page: `settings`
+Pastikan struktur file `route_app.dart` dan `route_names.dart` sesuai format yang diharapkan generator.
 
-## 📁 Struktur Project Setelah Install
+### Freezed tidak generate
 
-```
-your_flutter_project/
-├── generate.dart              # Generator script
-├── .vscode/tasks.json         # VSCode tasks
-├── lib/
-│   ├── main.dart              # Updated dengan GetMaterialApp
-│   └── apps/
-│       ├── routes/
-│       │   ├── route_names.dart
-│       │   └── route_app.dart
-│       ├── features/
-│       │   ├── home/
-│       │   └── settings/
-│       ├── widget/            # Custom widgets
-│       ├── controller/        # Standalone controllers
-│       └── data/model/        # Global models
-└── pubspec.yaml
-```
-
-## 🔄 Update Generator
+Jalankan build_runner setelah generate model:
 
 ```bash
-# Untuk update generator ke versi terbaru
-curl -o generate.dart https://raw.githubusercontent.com/username/repo/main/generate.dart
-curl -o tasks.json https://raw.githubusercontent.com/username/repo/main/tasks.json
+flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
-## ⚠️ Troubleshooting Installation
+## 📋 Command Reference
 
-**Error: Dart command not found**
-- Pastikan Dart SDK terinstall dan ada di PATH
+| Command | Description |
+|---------|-------------|
+| `init` | Initialize project structure |
+| `page:<name>` | Generate full page |
+| `page:<name> --presentation-only` | Generate page without data/domain |
+| `controller:<name>` | Generate standalone controller |
+| `model:<name>` | Generate basic model |
+| `model:<name> --freezed` | Generate Freezed model |
+| `widget:<name>` | Generate reusable widget |
+| `service:<name>` | Generate GetxService |
+| `screen <name> on <page>` | Generate screen on page |
+| `repository:<name> on <page>` | Generate repository on page |
+| `usecase:<name> on <page>` | Generate usecase on page |
+| `entity:<name> on <page>` | Generate entity on page |
+| `delete:page:<name>` | Delete page and update routes |
+| `list` | List all available pages |
+| `--help`, `-h` | Show help |
+| `--version`, `-v` | Show version |
+| `--force`, `-f` | Force overwrite files |
 
-**Error: File not found**
-- Pastikan berada di root project Flutter
-- Pastikan `pubspec.yaml` ada di directory saat ini
+## 🔄 Changelog
 
-**Error: GetX not found**
-- Pastikan GetX sudah ditambahkan di `pubspec.yaml`
-- Run `flutter pub get`
+### v2.0.0 (2024-12-22)
+- ✨ **New:** Entity generator
+- ✨ **New:** Usecase generator (standalone)
+- ✨ **New:** Service generator
+- ✨ **New:** Freezed model support
+- ✨ **New:** Delete page command
+- ✨ **New:** List pages command
+- ✨ **New:** Help command
+- ✨ **New:** Force overwrite flag
+- 🐛 **Fix:** Input validation untuk nama
+- 🐛 **Fix:** toCamelCase dan toSnakeCase handle edge cases
+- 🐛 **Fix:** updateRoutes insert position yang benar
+- 🐛 **Fix:** Widget syntax error
+- 🐛 **Fix:** tasks.json invalid JSON comments
+- 🔧 **Improve:** Error handling dengan safe file write
+- 🔧 **Improve:** Better console output dengan emoji
+- 🔧 **Improve:** Controller template dengan loading/error state
+- 🔧 **Improve:** Model template dengan copyWith dan equality
+- 📚 **Docs:** README lengkap dengan contoh
 
-**VSCode tasks tidak muncul**
-- Pastikan `tasks.json` ada di folder `.vscode/`
-- Restart VSCode
+### v1.0.0
+- 🎉 Initial release
+- Page generator dengan Clean Architecture
+- Screen generator
+- Controller generator
+- Model generator
+- Widget generator
+- Repository generator
+- VSCode tasks integration
 
-**Routes error**
-- Pastikan import path di `main.dart` sesuai struktur project
+## 📄 License
 
-## 🎯 Quick Start Commands
+MIT License - lihat file [LICENSE](LICENSE) untuk detail.
 
-Setelah installasi berhasil, gunakan perintah berikut:
+## 🤝 Contributing
 
-```bash
-# Setup project structure dasar
-dart generate.dart page:splash
-dart generate.dart page:login --presentation-only
-dart generate.dart page:home
-dart generate.dart screen profile on home
+Kontribusi sangat diterima! Silakan buat issue atau pull request.
 
-# Generate supporting files
-dart generate.dart repository:user on home
-dart generate.dart widget:loading
-dart generate.dart model:user
-```
+1. Fork repository
+2. Buat branch fitur (`git checkout -b feature/amazing`)
+3. Commit perubahan (`git commit -m 'Add amazing feature'`)
+4. Push ke branch (`git push origin feature/amazing`)
+5. Buat Pull Request
 
-## 📝 Notes
+## 👨‍💻 Author
 
-- Generator ini optimized untuk project dengan struktur feature-based
-- Semua generated code mengikuti best practices GetX dan Clean Architecture
-- File routes akan terupdate otomatis setiap generate page baru
-- Support untuk nested pages: `page:settings.profile`
+**Cahyo** - [GitHub](https://github.com/cahyo40)
 
-Dengan mengikuti panduan ini, Anda akan memiliki code generator yang powerful untuk mempercepat development Flutter project! 🚀
+---
+
+<p align="center">
+  Made with ❤️ for Flutter Community
+</p>
